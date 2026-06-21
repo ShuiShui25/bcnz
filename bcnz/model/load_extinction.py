@@ -41,7 +41,7 @@ def load_extinction(d, suff):
         part = pd.read_table(x, sep=sep, names=["lmb", "k"], comment="#")
         part["ext_law"] = path.with_suffix("").name
 
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     assert len(df), "No extinction curves found"
 

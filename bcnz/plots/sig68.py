@@ -77,7 +77,7 @@ def cum_bins(cat, bins, quantity, cut_key):
 
         part = _core_bins(sub, cut_key)
         part['xbin_val'] = lim_cut
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     return df
 
@@ -87,7 +87,7 @@ def normal_bins(cat, bins, quantity, cut_key='Qz'):
         part = _core_bins(sub, cut_key)
 
         part['xbin_val'] = sub[quantity].mean()
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     return df
 

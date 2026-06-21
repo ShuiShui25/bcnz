@@ -33,7 +33,7 @@ def rband(field):
 
 
 def paus(engine, memba_prod, field, d_cosmos='~/data/cosmos',
-         d_filters='~/data/photoz/all_filters/v3', min_nb=35,
+         d_filters='~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/all_filters/v3', min_nb=35,
          only_specz=False, secure_spec=False, has_bb=False, sel_gal=True,
          coadd_file=None, sel_gal_specz = True, apply_mask = False):
     """Load the PAUS data from PAUdm and perform the required

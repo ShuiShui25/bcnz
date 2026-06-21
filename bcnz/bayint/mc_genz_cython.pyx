@@ -8,8 +8,8 @@ cimport cython
 from libc.math cimport erf, sqrt, fabs, log, pi, exp
 from libc.stdlib cimport rand, RAND_MAX
 
-DTYPE = np.float
-ctypedef np.float_t DTYPE_t
+DTYPE = np.float64
+ctypedef np.float64_t DTYPE_t
 ctypedef np.int_t DTYPE_int_t
 
 cdef DTYPE_t SQRT2 = sqrt(2)

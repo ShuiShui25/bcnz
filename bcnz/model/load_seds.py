@@ -53,7 +53,7 @@ def load_seds(input_dir):
         part['response'] = response
         part['sed'] = name
 
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     # The SEDs are sometimes defined with duplicate entries that ends
     # up creating technical problems later.

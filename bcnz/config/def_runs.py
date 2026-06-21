@@ -114,7 +114,7 @@ def eriksen2019():
     df = pd.concat(L, axis=1).T
 
     # This applies to all configurations.
-    sed_dir = "~/data/photoz/seds/cosmos_noext"
+    sed_dir = "~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/seds/cosmos_noext"
     df["sep_OIII"] = True
     df["sed_dir"] = sed_dir
 

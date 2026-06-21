@@ -126,7 +126,7 @@ def calc_ab(config, filters, lines, ext, r_const):
             part["ext_law"] = config["ext_law"]
             part["EBV"] = EBV
 
-            df = df.append(part, ignore_index=True)
+            df = pd.concat([df, part], ignore_index=True)
 
             t2 = time.time()
             print(t2 - t1)

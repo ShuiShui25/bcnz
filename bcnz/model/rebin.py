@@ -23,7 +23,7 @@ import pandas as pd
 from scipy.interpolate import splrep, splev, splint
 
 
-def rebin(model, zmin=0.01, zmax=1.2, dz=0.001, zgrid=None):
+def rebin(model, zmin=0.01, zmax=2.0, dz=0.001, zgrid=None):
     """Rebinning the redshift grid of the model.
 
        Args:
@@ -56,7 +56,7 @@ def rebin(model, zmin=0.01, zmax=1.2, dz=0.001, zgrid=None):
         for k1, v1 in zip(model.index.names, key):
             part[k1] = v1
 
-        rebinned = rebinned.append(part)
+        rebinned = pd.concat([rebinned, part])
 
     print("time", time.time() - t1)
     rebinned = rebinned.reset_index().set_index(inds + ["z"])

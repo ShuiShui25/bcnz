@@ -158,7 +158,7 @@ def _core_allz(ref_id, f_mod, flux, var_inv, Niter, Nskip):
     norm = xr.DataArray(v_scaled, coords=coords_norm, dims=\
                         ('ref_id','z','model'))
 
-    return chi2x, norm
+    return chi2x, norm, Fx
 
 def minimize_all_z(data_df, modelD, **config): #fit_bands, Niter, Nskip):
     """Combines the chi2 estimate for all models into a single structure."""
@@ -178,12 +178,13 @@ def minimize_all_z(data_df, modelD, **config): #fit_bands, Niter, Nskip):
         L.append(_core_allz(ref_id, f_mod, flux, var_inv, *args))
 
     dim = pd.Index([int(x) for x in keys], name='run')
-    chi2L, normL = zip(*L)
+    chi2L, normL, fitted_fluxL = zip(*L)
 
     chi2 = xr.concat(chi2L, dim=dim)
     norm = xr.concat(normL, dim=dim)
+    fitted_flux = xr.concat(fitted_fluxL, dim=dim)
 
-    return chi2, norm
+    return chi2, norm, fitted_flux
 
 
 def flatten_models(modelD):
@@ -201,22 +202,17 @@ def flatten_models(modelD):
 
     return model
 
-def get_model(name, model, norm, pzcat, z, scale_input=False):
-    """Get the model magnitudes at a given redshift."""
-  
+def get_model(name, fitted_flux, pzcat, z, scale_input=False):
+    """Get the fitted flux model at a given redshift.
 
+    ``fitted_flux`` is the same NB/BB-scaled model used to evaluate chi2 in
+    ``_core_allz``. In particular, PAUS narrow bands already include the
+    fitted relative NB scale ``k(z)``.
+    """
     z_xr = xr.DataArray(z, coords={'ref_id': pzcat.index.values})
     bestrun_xr = xr.DataArray(pzcat.best_run.values, coords={'ref_id': pzcat.index.values})
 
-    tmp_model = model.sel(z=z_xr, run=bestrun_xr)
-#    tmp_model = model.sel_points(z=z, run=pzcat.best_run.values, dim='ref_id')
-
-    tmp_norm = norm.sel(z=z_xr, run=bestrun_xr)
-#    tmp_norm = norm.sel_points(ref_id=pzcat.index, z=z, run=pzcat.best_run.values)
-#    tmp_norm = tmp_norm.rename({'points': 'ref_id'})
-
-
-    best_model = (tmp_model * tmp_norm).sum(dim='model')
+    best_model = fitted_flux.sel(z=z_xr, run=bestrun_xr)
     
     columns = [f'{name}_{x}' for x in best_model.band.values]
     best_model = pd.DataFrame(best_model.values, columns=columns, index=pzcat.index)
@@ -292,7 +288,7 @@ def photoz(galcat, modelD, ebvD, fit_bands, Niter=1000, Nskip=10, odds_lim=0.01,
     # from the provided bands..
     i_band = i_band if i_band else _find_iband(fit_bands)
 
-    chi2, norm = minimize_all_z(galcat, modelD, **config)
+    chi2, norm, fitted_flux = minimize_all_z(galcat, modelD, **config)
     pzcat, pz = libpzqual.get_pzcat(chi2, odds_lim, width_frac)
 
     model = flatten_models(modelD)
@@ -307,9 +303,9 @@ def photoz(galcat, modelD, ebvD, fit_bands, Niter=1000, Nskip=10, odds_lim=0.01,
     pzcat['ebv'] = pzcat.ebv.astype('float') # Just because of a weird issue.
 
     # Model magnitudes at the best fit redshift and z=0.
-    best_model = get_model('model', model, norm, pzcat, pzcat.zb.values)
+    best_model = get_model('model', fitted_flux, pzcat, pzcat.zb.values)
     z0 = 0.01*np.ones_like(pzcat.zb) # yes, a hack.
-    model_z0 = get_model('modelz0', model, norm, pzcat, z0)
+    model_z0 = get_model('modelz0', fitted_flux, pzcat, z0)
     iband_model = get_iband_model(model, norm, pzcat, i_band=i_band)
 
 
@@ -326,7 +322,7 @@ def flatten_input(df):
     flux = df.flux.rename(columns=lambda x: f'flux_{x}')
     flux_error = df.flux_error.rename(columns=lambda x: f'flux_error_{x}')
 
-    comb = pd.concat([flux, flux_error], 1)
+    comb = pd.concat([flux, flux_error], axis=1)
 
     return comb
 
@@ -349,4 +345,3 @@ def photoz_flatten(galcat, *args, **kwds):
     df_out = pd.concat([pzcat, best_model, model_z0, iband_model, pz], axis=1)
     
     return df_out
-

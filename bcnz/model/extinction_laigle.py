@@ -27,7 +27,7 @@ from IPython.core import debugger as ipdb
 def extinction_laigle():
     """The extinction files used in the Laigle paper."""
 
-    d = '~/data/photoz/ext_laws' 
+    d = '~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/ext_laws' 
     g = os.path.join(os.path.expanduser(d), '*.csv')
 
     df = pd.DataFrame()
@@ -36,7 +36,7 @@ def extinction_laigle():
         part = pd.read_csv(path, names=['lmb', 'k'], comment='#')
         part['ext_law'] = os.path.basename(path).replace('.csv', '')
 
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     assert len(df), 'No extinction curves found'
 

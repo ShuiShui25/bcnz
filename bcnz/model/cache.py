@@ -52,6 +52,7 @@ def cache_model(model_dir, runs):
             continue
 
         print(f'Running model: {i}')
+        print(f"Generated file name: {fname}")
         model = bcnz.model.model_single(**row)
         model.to_netcdf(path)
         

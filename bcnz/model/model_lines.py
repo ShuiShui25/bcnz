@@ -146,7 +146,7 @@ def model_lines(ratios, filters, extinction, ext_law, EBV, dz=0.0005, ampl=1e-16
         part = _find_flux(config, z, f_spl, ratios, rconst, ext_spl, band)
         part = _to_df(part, z, band)
 
-        df = df.append(part, ignore_index=True)
+        df = pd.concat([df, part], ignore_index=True)
 
     df['ext_law'] = config['ext_law']
     df['EBV'] = config['EBV']

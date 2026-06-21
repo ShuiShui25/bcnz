@@ -58,8 +58,8 @@ def odds(pz, zbx, odds_lim):
     dz = float(z[1] - z[0])
     bins1 = (z1 - z0) / dz - 1 # Cumsum is estimated at the end
     bins2 = (z2 - z0) / dz - 1
-    i1 = np.clip(np.floor(bins1), 0, np.infty).astype(np.int)
-    i2 = np.clip(np.floor(bins2), 0, np.infty).astype(np.int)
+    i1 = np.clip(np.floor(bins1), 0, np.infty).astype(int)
+    i2 = np.clip(np.floor(bins2), 0, np.infty).astype(int)
     db1 = bins1 - i1
     db2 = bins2 - i2
 
@@ -196,8 +196,8 @@ def get_pzcat(chi2, odds_lim, width_frac):
     odds0p2 = odds(pz, cat.zb, odds_lim)
     cat['qz'] = (chi2_min*pz_widthx / odds0p2.values).values
 
-    # The run which contribute most to the redshift peak ...
-    iz = pz.argmin(dim='z')
+    # Select the redshift bin at the maximum of the marginalized p(z).
+    iz = pz.argmax(dim='z')
 
     points = chi2.isel(z=iz)
 #    ipdb.set_trace()

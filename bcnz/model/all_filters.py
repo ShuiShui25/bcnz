@@ -22,7 +22,7 @@ import pandas as pd
 from glob import glob
 
 
-def all_filters(d_filters='~/data/photoz/all_filters/v4'):
+def all_filters(d_filters='~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/all_filters/v4'):
     """Create a dataframe joining all filters."""
 
     # Upgraded directory to include the CFHT filters + KiDS filters.

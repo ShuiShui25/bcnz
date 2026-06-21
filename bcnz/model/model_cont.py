@@ -86,7 +86,7 @@ def calc_ab(config, filters, seds, ext, r_const):
     int_method = config["int_method"]
     a = 1.0 / (1 + z)
     for i, band in enumerate(filters.index.unique()):
-        print("# band", i, "band", band)
+        # print("# band", i, "band", band)
 
         sub_f = filters.loc[band]
 
@@ -127,7 +127,7 @@ def calc_ab(config, filters, seds, ext, r_const):
             part["ext_law"] = config["ext_law"]
             part["EBV"] = EBV
 
-            df = df.append(part, ignore_index=True)
+            df = pd.concat([df, part], ignore_index=True)
 
             t2 = time.time()
 
